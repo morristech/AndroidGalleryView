@@ -8,13 +8,17 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="start"
         android:id="@+id/button" />
 
-
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="stop"
+        android:id="@+id/button1" />
     <com.test.wzq.androidgalleryview.LoopView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="200dp"
         android:scaleType="centerCrop"
         android:id="@+id/main_image"/>
 

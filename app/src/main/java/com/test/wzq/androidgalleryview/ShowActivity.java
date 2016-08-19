@@ -1,6 +1,7 @@
 package com.test.wzq.androidgalleryview;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,13 +17,16 @@ import java.util.List;
 /**
  * Created by wzq on 16/8/10.
  */
-public class Activity1 extends AppCompatActivity {
+public class ShowActivity extends AppCompatActivity {
 
     private String[] mImgs = new String[]{"http://cdn.firstlinkapp.com/real/img/2016_8/1470024069956_83198.jpg",
             "http://cdn.firstlinkapp.com/real/img/2016_6/1467272485840_74123.jpg",
             "http://cdn.firstlinkapp.com/real/img/2016_8/1470707433746_37883.jpg",
             "http://cdn.firstlinkapp.com/real/img/2016_8/1470707433746_37883.jpg",
-            "http://cdn.firstlinkapp.com/real/img/2016_8/1470707433746_37883.jpg"};
+            "http://cdn.firstlinkapp.com/real/img/2016_8/1470707433746_37883.jpg",
+            "http://cdn.firstlinkapp.com/real/img/2016_8/1470707433746_37883.jpg",
+            "http://cdn.firstlinkapp.com/real/img/2016_8/1470707433746_37883.jpg",
+            "http://cdn.firstlinkapp.com/real/img/2016_8/1470707433746_37883.jpg",};
 
     boolean flag = true;
 
@@ -38,9 +42,31 @@ public class Activity1 extends AppCompatActivity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gv.startSmooth();
+                flag = true;
+                loop();
             }
         });
+
+        findViewById(R.id.button1).setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                flag = false;
+            }
+        });
+    }
+
+
+    private void loop(){
+        if (flag) {
+            gv.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    gv.startSmooth();
+                    loop();
+                }
+            }, 2000);
+        }
     }
 
     @Override

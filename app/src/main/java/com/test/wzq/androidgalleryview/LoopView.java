@@ -58,7 +58,6 @@ public class LoopView extends ViewGroup {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        System.out.println(w + "---" + h + "---" + oldw + "---" + oldh);
         mWidth = w;
         mHeight = h;
         offset = w;
@@ -77,10 +76,10 @@ public class LoopView extends ViewGroup {
             Glide.with(getContext()).load(getImagePath(i)).into(mImages[i]);
         }
 
-//        mShadowView = new View(getContext());
-//        mShadowView.setBackgroundColor(Color.parseColor("#60000000"));
-//        mShadowView.setAlpha(0);
-//        addViewInLayout(mShadowView, -1, params, true);
+        mShadowView = new View(getContext());
+        mShadowView.setBackgroundColor(Color.parseColor("#60000000"));
+        mShadowView.setAlpha(0);
+        addViewInLayout(mShadowView, -1, params, true);
     }
 
 
@@ -96,7 +95,6 @@ public class LoopView extends ViewGroup {
             int cl = 0, ct = 0, cr, cb;
 
             if (isOddCircle()) {
-                System.out.println("a-----"+i);
                 if (i == 1) {
                     ct = cParams.topMargin;
                     cl = offset - mWidth;
@@ -105,7 +103,6 @@ public class LoopView extends ViewGroup {
                     cl = offset;
                 }
             } else {
-                System.out.println(i);
                 if (i == 0) {
                     ct = cParams.topMargin;
                     cl = offset - mWidth;
@@ -114,11 +111,11 @@ public class LoopView extends ViewGroup {
                     cl = offset;
                 }
             }
-//
-//            if (i == 2) {
-//                ct = cParams.topMargin;
-//                cl = offset + mWidth;
-//            }
+
+            if (i == 2) {
+                ct = cParams.topMargin;
+                cl = offset + mWidth;
+            }
 
             cr = cl + mWidth;
             cb = ct + mHeight;
@@ -187,11 +184,11 @@ public class LoopView extends ViewGroup {
         } else {
             Glide.with(getContext()).load(getImagePath(mRepeats + 1)).into(mImages[1]);
         }
-       // mShadowView.setAlpha(0);
+        mShadowView.setAlpha(0);
     }
 
     protected void doAnim() {
-        //mShadowView.setAlpha(((1 - (-offset) / (float) mHeight)));
+        mShadowView.setAlpha(((1 - (offset) / (float) mHeight)));
         requestLayout();
     }
 
@@ -200,5 +197,7 @@ public class LoopView extends ViewGroup {
         initViews();
     }
 
-
+    interface Action{
+        void loadPicture(String url, ImageView view);
+    }
 }
