@@ -1,4 +1,4 @@
-package com.test.wzq.androidgalleryview;
+package com.test.wzq.androidgalleryview.view;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -9,15 +9,13 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by wzq on 16/8/9.
  */
-public class GalleryView extends ViewGroup {
+public class LoopView extends ViewGroup {
 
     public static final int STATUS_ON = 1;
 
@@ -43,26 +41,27 @@ public class GalleryView extends ViewGroup {
     private ImageView[] mImages = new ImageView[2];
     private View mShadowView;
 
-    public GalleryView(Context context) {
+    private Action action;
+
+    public LoopView(Context context) {
         super(context, null);
     }
 
-    public GalleryView(Context context, AttributeSet attrs) {
+    public LoopView(Context context, AttributeSet attrs) {
         super(context, attrs, 0);
     }
 
-    public GalleryView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public LoopView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        System.out.println(w + "---" + h + "---" + oldw + "---" + oldh);
         mWidth = w;
         mHeight = h;
-        offset = -h;
-        //initViews();
+        offset = w;
+        initViews();
     }
 
     private void initViews() {
@@ -74,7 +73,7 @@ public class GalleryView extends ViewGroup {
             mImages[i] = new ImageView(getContext());
             mImages[i].setScaleType(ImageView.ScaleType.CENTER_CROP);
             addViewInLayout(mImages[i], -1, params, true);
-            Glide.with(getContext()).load(getImagePath(i)).into(mImages[i]);
+            action.loadPicture(getImagePath(i), mImages[i]);
         }
 
         mShadowView = new View(getContext());
@@ -97,25 +96,25 @@ public class GalleryView extends ViewGroup {
 
             if (isOddCircle()) {
                 if (i == 1) {
-                    cl = cParams.leftMargin;
-                    ct = offset + mHeight;
+                    ct = cParams.topMargin;
+                    cl = offset - mWidth;
                 } else if (i == 0) {
-                    cl = cParams.leftMargin;
-                    ct = offset;
+                    ct = cParams.topMargin;
+                    cl = offset;
                 }
             } else {
                 if (i == 0) {
-                    cl = cParams.leftMargin;
-                    ct = offset + mHeight;
+                    ct = cParams.topMargin;
+                    cl = offset - mWidth;
                 } else if (i == 1) {
-                    cl = cParams.leftMargin;
-                    ct = offset;
+                    ct = cParams.topMargin;
+                    cl = offset;
                 }
             }
 
             if (i == 2) {
-                cl = cParams.leftMargin;
-                ct = offset + mHeight;
+                ct = cParams.topMargin;
+                cl = offset + mWidth;
             }
 
             cr = cl + mWidth;
@@ -144,7 +143,7 @@ public class GalleryView extends ViewGroup {
             return;
         }
 
-        ValueAnimator animator = ValueAnimator.ofFloat(-mHeight, 0);
+        ValueAnimator animator = ValueAnimator.ofFloat(mWidth, 0);
         animator.setDuration(mDuration);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -153,7 +152,6 @@ public class GalleryView extends ViewGroup {
 
                 float marginTop = (float) animation.getAnimatedValue();
                 offset = (int) marginTop;
-                System.out.println(offset);
                 if (marginTop == 0) {
 
                     postDelayed(new Runnable() {
@@ -162,7 +160,7 @@ public class GalleryView extends ViewGroup {
 
                             mRepeats++;
 
-                            offset = -mHeight;
+                            offset = mWidth;
 
                             doAnimFinish();
 
@@ -181,23 +179,28 @@ public class GalleryView extends ViewGroup {
     }
 
     protected void doAnimFinish() {
-        if (isOddCircle()) {
-            Glide.with(getContext()).load(getImagePath(mRepeats + 1)).into(mImages[0]);
-        } else {
-            Glide.with(getContext()).load(getImagePath(mRepeats + 1)).into(mImages[1]);
-        }
+        action.loadPicture(getImagePath(mRepeats + 1), isOddCircle()? mImages[0]: mImages[1]);
         mShadowView.setAlpha(0);
+        action.onChange(mRepeats);
     }
 
     protected void doAnim() {
-        mShadowView.setAlpha(((1 - (-offset) / (float) mHeight)));
+        mShadowView.setAlpha(((1 - (offset) / (float) mHeight)));
         requestLayout();
     }
 
     public void setImgList(List<String> imgList) {
         mImageUrl = imgList;
-        initViews();
+        //initViews();
     }
 
+    public void setAction(Action action0){
+        this.action = action0;
+    }
 
+    public interface Action{
+        void loadPicture(String url, ImageView view);
+
+        void onChange(int position);
+    }
 }

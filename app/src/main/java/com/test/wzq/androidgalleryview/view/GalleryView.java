@@ -1,4 +1,4 @@
-package com.test.wzq.androidgalleryview;
+package com.test.wzq.androidgalleryview.view;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by wzq on 16/8/9.
  */
-public class LoopView extends ViewGroup {
+public class GalleryView extends ViewGroup {
 
     public static final int STATUS_ON = 1;
 
@@ -43,24 +43,25 @@ public class LoopView extends ViewGroup {
     private ImageView[] mImages = new ImageView[2];
     private View mShadowView;
 
-    public LoopView(Context context) {
+    public GalleryView(Context context) {
         super(context, null);
     }
 
-    public LoopView(Context context, AttributeSet attrs) {
+    public GalleryView(Context context, AttributeSet attrs) {
         super(context, attrs, 0);
     }
 
-    public LoopView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public GalleryView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        System.out.println(w + "---" + h + "---" + oldw + "---" + oldh);
         mWidth = w;
         mHeight = h;
-        offset = w;
+        offset = -h;
         //initViews();
     }
 
@@ -96,25 +97,25 @@ public class LoopView extends ViewGroup {
 
             if (isOddCircle()) {
                 if (i == 1) {
-                    ct = cParams.topMargin;
-                    cl = offset - mWidth;
+                    cl = cParams.leftMargin;
+                    ct = offset + mHeight;
                 } else if (i == 0) {
-                    ct = cParams.topMargin;
-                    cl = offset;
+                    cl = cParams.leftMargin;
+                    ct = offset;
                 }
             } else {
                 if (i == 0) {
-                    ct = cParams.topMargin;
-                    cl = offset - mWidth;
+                    cl = cParams.leftMargin;
+                    ct = offset + mHeight;
                 } else if (i == 1) {
-                    ct = cParams.topMargin;
-                    cl = offset;
+                    cl = cParams.leftMargin;
+                    ct = offset;
                 }
             }
 
             if (i == 2) {
-                ct = cParams.topMargin;
-                cl = offset + mWidth;
+                cl = cParams.leftMargin;
+                ct = offset + mHeight;
             }
 
             cr = cl + mWidth;
@@ -143,7 +144,7 @@ public class LoopView extends ViewGroup {
             return;
         }
 
-        ValueAnimator animator = ValueAnimator.ofFloat(mWidth, 0);
+        ValueAnimator animator = ValueAnimator.ofFloat(-mHeight, 0);
         animator.setDuration(mDuration);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -152,6 +153,7 @@ public class LoopView extends ViewGroup {
 
                 float marginTop = (float) animation.getAnimatedValue();
                 offset = (int) marginTop;
+                System.out.println(offset);
                 if (marginTop == 0) {
 
                     postDelayed(new Runnable() {
@@ -160,7 +162,7 @@ public class LoopView extends ViewGroup {
 
                             mRepeats++;
 
-                            offset = mWidth;
+                            offset = -mHeight;
 
                             doAnimFinish();
 
@@ -188,7 +190,7 @@ public class LoopView extends ViewGroup {
     }
 
     protected void doAnim() {
-        mShadowView.setAlpha(((1 - (offset) / (float) mHeight)));
+        mShadowView.setAlpha(((1 - (-offset) / (float) mHeight)));
         requestLayout();
     }
 
@@ -197,7 +199,5 @@ public class LoopView extends ViewGroup {
         initViews();
     }
 
-    interface Action{
-        void loadPicture(String url, ImageView view);
-    }
+
 }
