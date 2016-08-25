@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.bumptech.glide.Glide;
 import com.test.wzq.androidgalleryview.view.LoopView;
 
 
