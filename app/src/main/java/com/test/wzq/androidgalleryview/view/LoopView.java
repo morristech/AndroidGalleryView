@@ -68,7 +68,7 @@ public class LoopView extends ViewGroup {
         MarginLayoutParams params = new MarginLayoutParams(mWidth, mHeight);
         for (int i = 0; i < mImages.length; i++) {
             mImages[i] = new ImageView(getContext());
-            mImages[i].setScaleType(ImageView.ScaleType.CENTER_CROP);
+            mImages[i].setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             addViewInLayout(mImages[i], -1, params, true);
             action.nextPicture(getPosition(i), mImages[i]);
         }

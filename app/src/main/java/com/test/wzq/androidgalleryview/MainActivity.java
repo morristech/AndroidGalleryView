@@ -16,12 +16,12 @@ import com.test.wzq.androidgalleryview.view.LoopView;
 public class MainActivity extends AppCompatActivity {
 
 
-    private String[] pictures = new String[]{
-            "http://cdn.firstlinkapp.com/real/img/2016_8/1470024069956_83198.jpg",
-            "http://cdn.firstlinkapp.com/real/img/2016_8/1470707433746_37883.jpg",
-            "http://cdn.firstlinkapp.com/real/img/2016_8/1470024069956_83198.jpg",
-            "http://cdn.firstlinkapp.com/real/img/2016_8/1470707433746_37883.jpg",
-            "http://cdn.firstlinkapp.com/real/img/2016_8/1470024069956_83198.jpg"
+    private int[] pictures = new int[]{
+            R.mipmap.help_body_1,
+            R.mipmap.help_body_2,
+            R.mipmap.help_body_3,
+            R.mipmap.help_body_4,
+            R.mipmap.help_body_5
     };
 
     private boolean flag = true;
@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
         gv.setAction(new LoopView.Action() {
             @Override
             public void nextPicture(int position, ImageView view) {
-                Glide.with(MainActivity.this).load(pictures[position]).into(view);
+                //Glide.with(MainActivity.this).load(pictures[position]).fitCenter().into(view);
+                view.setImageResource(pictures[position]);
             }
 
             @Override
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 while (flag) {
-                    SystemClock.sleep(1500);
+                    SystemClock.sleep(2000);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
