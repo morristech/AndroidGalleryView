@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by wzq on 16/8/9.
@@ -30,14 +28,13 @@ public class LoopView extends ViewGroup {
     //move length
     private int offset;
 
-    private int mDuration = 500;
+    private int viewSize;
 
+    private int mDuration = 400;
 
     //repeat times
     private int mRepeats = 0;
 
-
-    private List<String> mImageUrl = new ArrayList<>();
     private ImageView[] mImages = new ImageView[2];
     private View mShadowView;
 
@@ -65,7 +62,7 @@ public class LoopView extends ViewGroup {
     }
 
     private void initViews() {
-        if (mImageUrl.size() == 0)
+        if (viewSize == 0)
             return;
         removeAllViews();
         MarginLayoutParams params = new MarginLayoutParams(mWidth, mHeight);
@@ -73,7 +70,7 @@ public class LoopView extends ViewGroup {
             mImages[i] = new ImageView(getContext());
             mImages[i].setScaleType(ImageView.ScaleType.CENTER_CROP);
             addViewInLayout(mImages[i], -1, params, true);
-            action.loadPicture(getImagePath(i), mImages[i]);
+            action.nextPicture(getPosition(i), mImages[i]);
         }
 
         mShadowView = new View(getContext());
@@ -128,9 +125,8 @@ public class LoopView extends ViewGroup {
         return mRepeats % 2 == 1;
     }
 
-    private String getImagePath(int position) {
-        position = position % mImageUrl.size();
-        return mImageUrl.get(position);
+    private int getPosition(int position) {
+        return position % viewSize;
     }
 
 
@@ -153,7 +149,6 @@ public class LoopView extends ViewGroup {
                 float marginTop = (float) animation.getAnimatedValue();
                 offset = (int) marginTop;
                 if (marginTop == 0) {
-
                     postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -179,9 +174,9 @@ public class LoopView extends ViewGroup {
     }
 
     protected void doAnimFinish() {
-        action.loadPicture(getImagePath(mRepeats + 1), isOddCircle()? mImages[0]: mImages[1]);
+        action.onChange(mRepeats%viewSize);
+        action.nextPicture(getPosition(mRepeats + 1), isOddCircle() ? mImages[0] : mImages[1]);
         mShadowView.setAlpha(0);
-        action.onChange(mRepeats);
     }
 
     protected void doAnim() {
@@ -189,17 +184,17 @@ public class LoopView extends ViewGroup {
         requestLayout();
     }
 
-    public void setImgList(List<String> imgList) {
-        mImageUrl = imgList;
+    public void setViewSize(int viewSize) {
+        this.viewSize = viewSize;
         //initViews();
     }
 
-    public void setAction(Action action0){
+    public void setAction(Action action0) {
         this.action = action0;
     }
 
-    public interface Action{
-        void loadPicture(String url, ImageView view);
+    public interface Action {
+        void nextPicture(int position, ImageView view);
 
         void onChange(int position);
     }

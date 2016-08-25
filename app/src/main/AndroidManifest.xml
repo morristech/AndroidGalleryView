@@ -18,8 +18,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ShowActivity" />
-
     </application>
 
 </manifest>
